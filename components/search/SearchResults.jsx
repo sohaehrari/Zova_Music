@@ -1,7 +1,4 @@
 
-Soha Ahrari
-4:03 PM (2 minutes ago)
-to me
 
 type SearchResult = {
   id: string;
