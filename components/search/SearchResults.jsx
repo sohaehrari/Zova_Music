@@ -1,26 +1,15 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 
-type SearchResult = {
-  id: string;
-  title: string;
-  artist: string;
-  image: string;
-};
-
-type SearchResultsProps = {
-  query: string;
-};
-
-export default function SearchResults({ query }: SearchResultsProps) {
-  const [results, setResults] = useState<SearchResult[]>([]);
+export default function SearchResults({ query }) {
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!query) {
+    if (!query?.trim()) {
       setResults([]);
+      setLoading(false);
       return;
     }
 
@@ -31,6 +20,10 @@ export default function SearchResults({ query }: SearchResultsProps) {
         const response = await fetch(
           `/api/search?q=${encodeURIComponent(query)}`
         );
+
+        if (!response.ok) {
+          throw new Error("Failed to search music");
+        }
 
         const data = await response.json();
 
@@ -80,14 +73,22 @@ export default function SearchResults({ query }: SearchResultsProps) {
             key={song.id}
             className="group flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-amber-200 hover:shadow-lg"
           >
+            {/* Song Image */}
             <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-amber-50">
-              <img
-                src={song.image}
-                alt={song.title}
-                className="h-full w-full object-cover"
-              />
+              {song.image ? (
+                <img
+                  src={song.image}
+                  alt={song.title || "Song"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-2xl text-amber-500">
+                  ♪
+                </div>
+              )}
             </div>
 
+            {/* Song Information */}
             <div className="min-w-0 flex-1">
               <h3 className="truncate font-semibold text-gray-900">
                 {song.title}
@@ -98,6 +99,7 @@ export default function SearchResults({ query }: SearchResultsProps) {
               </p>
             </div>
 
+            {/* YouTube Button */}
             <a
               href={`https://www.youtube.com/watch?v=${song.id}`}
               target="_blank"

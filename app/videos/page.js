@@ -1,9 +1,9 @@
-
+"use client"
 import { useEffect } from "react";
 import { useState } from "react";
 
 export default function Videos(){
-    const[video,setVideo]=useState()
+    const[videos,setVideo]=useState()
     const[loading,setLoading]=useState([])
     const[query,setQuery]=useState("")
 
