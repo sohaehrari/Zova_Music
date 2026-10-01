@@ -3,6 +3,7 @@
 "use client";
 
 import { useState } from "react";
+import SearchResults from "@/components/search/SearchResults";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -52,7 +53,7 @@ export default function SearchPage() {
             </h2>
           </div>
         )}
-
+{query &&<SearchResults/>}
         {/* Empty State */}
         {!query && (
           <div className="mt-20 text-center">
