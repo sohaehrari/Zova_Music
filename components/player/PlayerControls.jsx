@@ -1,21 +1,28 @@
 
+
+"use client";
+
 export default function PlayerControls({
   isPlaying,
   onPlayPause,
+  onPrevious,
+  onNext,
   onClose,
+  hasPrevious,
+  hasNext,
 }) {
   return (
     <div className="flex items-center gap-2">
-      {/* Previous */}
       <button
         type="button"
-        className="hidden h-10 w-10 items-center justify-center rounded-full text-gray-400 transition hover:bg-amber-50 hover:text-amber-500 sm:flex"
+        onClick={onPrevious}
+        disabled={!hasPrevious}
+        className="hidden h-10 w-10 items-center justify-center rounded-full text-gray-400 transition hover:bg-amber-50 hover:text-amber-500 disabled:cursor-not-allowed disabled:opacity-30 sm:flex"
         aria-label="Previous song"
       >
         ⏮
       </button>
 
-      {/* Play / Pause */}
       <button
         type="button"
         onClick={onPlayPause}
@@ -25,16 +32,16 @@ export default function PlayerControls({
         {isPlaying ? "⏸" : "▶"}
       </button>
 
-      {/* Next */}
       <button
         type="button"
-        className="hidden h-10 w-10 items-center justify-center rounded-full text-gray-400 transition hover:bg-amber-50 hover:text-amber-500 sm:flex"
+        onClick={onNext}
+        disabled={!hasNext}
+        className="hidden h-10 w-10 items-center justify-center rounded-full text-gray-400 transition hover:bg-amber-50 hover:text-amber-500 disabled:cursor-not-allowed disabled:opacity-30 sm:flex"
         aria-label="Next song"
       >
         ⏭
       </button>
 
-      {/* Close */}
       <button
         type="button"
         onClick={onClose}
@@ -46,4 +53,3 @@ export default function PlayerControls({
     </div>
   );
 }
-

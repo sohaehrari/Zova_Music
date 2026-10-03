@@ -1,10 +1,18 @@
 
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import PlayerControls from "./PlayerControls";
 
-export default function AudioPlayer({ song, onClose }) {
+export default function AudioPlayer({
+  song,
+  onClose,
+  onNext,
+  onPrevious,
+  hasNext,
+  hasPrevious,
+}) {
   const playerRef = useRef(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -12,6 +20,9 @@ export default function AudioPlayer({ song, onClose }) {
 
   useEffect(() => {
     if (!song) return;
+
+    setProgress(0);
+    setIsPlaying(false);
 
     const createPlayer = () => {
       playerRef.current = new window.YT.Player("zova-youtube-player", {
@@ -101,11 +112,28 @@ export default function AudioPlayer({ song, onClose }) {
     }
   };
 
+  const handleSeek = (event) => {
+    if (!playerRef.current) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const clickPosition = event.clientX - rect.left;
+    const percentage = clickPosition / rect.width;
+
+    const duration = playerRef.current.getDuration();
+
+    if (!duration) return;
+
+    const newTime = duration * percentage;
+
+    playerRef.current.seekTo(newTime, true);
+    setProgress(percentage * 100);
+  };
+
   if (!song) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-amber-100 bg-white/95 px-4 py-3 shadow-2xl backdrop-blur-md">
-      {/* Hidden YouTube Player */}
       <div
         id="zova-youtube-player"
         className="pointer-events-none absolute h-px w-px opacity-0"
@@ -113,14 +141,12 @@ export default function AudioPlayer({ song, onClose }) {
 
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center gap-4">
-          {/* Cover */}
           <img
             src={song.image}
             alt={song.title}
             className="hidden h-14 w-14 shrink-0 rounded-xl object-cover sm:block"
           />
 
-          {/* Song Information */}
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-semibold text-gray-900">
               {song.title}
@@ -131,16 +157,23 @@ export default function AudioPlayer({ song, onClose }) {
             </p>
           </div>
 
-          {/* Controls */}
           <PlayerControls
             isPlaying={isPlaying}
             onPlayPause={handlePlayPause}
+            onPrevious={onPrevious}
+            onNext={onNext}
             onClose={onClose}
+            hasPrevious={hasPrevious}
+            hasNext={hasNext}
           />
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-gray-100">
+        <div
+          onClick={handleSeek}
+          className="mt-3 h-2 w-full cursor-pointer overflow-hidden rounded-full bg-gray-100"
+          role="slider"
+          aria-label="Song progress"
+        >
           <div
             className="h-full rounded-full bg-amber-500 transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -150,10 +183,3 @@ export default function AudioPlayer({ song, onClose }) {
     </div>
   );
 }
-
-
-
-
-
-
-
