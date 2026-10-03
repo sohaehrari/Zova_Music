@@ -1,7 +1,4 @@
 
-Soha Ahrari
-3:25 PM (0 minutes ago)
-to me
 
 import { notFound } from "next/navigation";
 
