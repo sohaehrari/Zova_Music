@@ -4,14 +4,36 @@
 
 import { useState } from "react";
 import SearchResults from "@/components/search/SearchResults";
+import AudioPlayer from "@/components/player/AudioPlayer";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [selectedSong, setSelectedSong] = useState(null);
+
+  const handleSelectSong = (song) => {
+    setSelectedSong(song);
+  };
+
+  const currentIndex = results.findIndex(
+    (song) => song.id === selectedSong?.id
+  );
+
+  const handleNext = () => {
+    if (currentIndex === -1 || currentIndex >= results.length - 1) return;
+
+    setSelectedSong(results[currentIndex + 1]);
+  };
+
+  const handlePrevious = () => {
+    if (currentIndex <= 0) return;
+
+    setSelectedSong(results[currentIndex - 1]);
+  };
 
   return (
-    <main className="min-h-screen bg-white px-6 py-16">
+    <main className="min-h-screen bg-white px-6 py-16 pb-32">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
         <div className="mb-10">
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-500">
             Zova Music
@@ -26,7 +48,6 @@ export default function SearchPage() {
           </p>
         </div>
 
-        {/* Search Input */}
         <div className="relative max-w-3xl">
           <input
             type="text"
@@ -41,20 +62,24 @@ export default function SearchPage() {
           </span>
         </div>
 
-        {/* Search Status */}
         {query && (
           <div className="mt-10">
-            <p className="text-sm text-gray-400">
-              Searching for:
-            </p>
+            <p className="text-sm text-gray-400">Searching for:</p>
 
             <h2 className="mt-1 text-2xl font-semibold text-gray-900">
               {query}
             </h2>
           </div>
         )}
-{query &&<SearchResults   query={query}/>}
-        {/* Empty State */}
+
+        {query && (
+          <SearchResults
+            query={query}
+            onSelectSong={handleSelectSong}
+            onResultsChange={setResults}
+          />
+        )}
+
         {!query && (
           <div className="mt-20 text-center">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-50 text-3xl text-amber-500">
@@ -71,6 +96,16 @@ export default function SearchPage() {
           </div>
         )}
       </div>
+
+      <AudioPlayer
+        song={selectedSong}
+        onClose={() => setSelectedSong(null)}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        hasNext={currentIndex < results.length - 1}
+        hasPrevious={currentIndex > 0}
+      />
     </main>
   );
 }
+
