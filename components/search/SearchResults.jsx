@@ -101,11 +101,11 @@ export default function SearchResults({ query }) {
 
             {/* YouTube Button */}
             <a
-              href={`https://www.youtube.com/watch?v=${song.id}`}
+              href={`/videos/${song.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 transition group-hover:bg-amber-500 group-hover:text-white"
-              aria-label={`Watch ${song.title}`}
+              aria-label={`Play ${song.title}`}
             >
               ▶
             </a>

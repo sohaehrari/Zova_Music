@@ -53,7 +53,7 @@ export default function SearchPage() {
             </h2>
           </div>
         )}
-{query &&<SearchResults/>}
+{query &&<SearchResults   query={query}/>}
         {/* Empty State */}
         {!query && (
           <div className="mt-20 text-center">
