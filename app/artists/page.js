@@ -1,55 +1,46 @@
 
-
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const artists = [
-  {
-    id: "aryana-sayeed",
-    name: "Aryana Sayeed",
-    image:
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "farhad-darya",
-    name: "Farhad Darya",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "hangama",
-    name: "Hangama",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "jawid-sharif",
-    name: "Jawid Sharif",
-    image:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "qais-ul-ansari",
-    name: "Qais Ulfat",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: "nasrat-parsa",
-    name: "Nasrat Parsa",
-    image:
-      "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80",
-  },
-];
-
 export default function ArtistsPage() {
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("Afghan singers");
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const filteredArtists = artists.filter((artist) =>
-    artist.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const searchArtists = async (searchQuery) => {
+    if (!searchQuery.trim()) {
+      setArtists([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `/api/artists?q=${encodeURIComponent(searchQuery)}`
+      );
+
+      const data = await response.json();
+
+      setArtists(data.results || []);
+    } catch (error) {
+      console.error("Artist search error:", error);
+      setArtists([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    searchArtists("Afghan singers");
+  }, []);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    searchArtists(query);
+  };
 
   return (
     <main className="min-h-screen bg-white px-6 py-16">
@@ -61,40 +52,53 @@ export default function ArtistsPage() {
           </p>
 
           <h1 className="mt-3 text-4xl font-bold text-gray-900 sm:text-5xl">
-            Afghan Artists
+            Artists
           </h1>
 
           <p className="mt-4 max-w-2xl text-gray-500">
-            Discover talented Afghan artists and explore their music.
+            Discover artists and explore their music.
           </p>
         </div>
 
         {/* Search */}
-        <div className="relative mb-12 max-w-2xl">
+        <form
+          onSubmit={handleSearch}
+          className="mb-12 flex max-w-3xl gap-3"
+        >
           <input
             type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
             placeholder="Search artists..."
-            className="w-full rounded-2xl border border-amber-500/20 bg-white px-5 py-4 pr-12 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
+            className="flex-1 rounded-2xl border border-amber-500/20 bg-white px-5 py-4 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
           />
 
-          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xl text-amber-500">
-            ⌕
-          </span>
-        </div>
+          <button
+            type="submit"
+            className="rounded-2xl bg-amber-500 px-6 py-4 font-semibold text-white transition hover:bg-amber-600"
+          >
+            Search
+          </button>
+        </form>
+
+        {/* Loading */}
+        {loading && (
+          <div className="py-20 text-center text-gray-500">
+            Finding artists...
+          </div>
+        )}
 
         {/* Artists */}
-        {filteredArtists.length > 0 ? (
+        {!loading && artists.length > 0 && (
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {filteredArtists.map((artist) => (
+            {artists.map((artist) => (
               <Link
                 key={artist.id}
                 href={`/artists/${artist.id}`}
                 className="group"
               >
                 <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:border-amber-200 group-hover:shadow-xl">
-                  <div className="aspect-square overflow-hidden">
+                  <div className="aspect-square overflow-hidden bg-amber-50">
                     <img
                       src={artist.image}
                       alt={artist.name}
@@ -108,14 +112,17 @@ export default function ArtistsPage() {
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-400">
-                      Afghan Artist
+                      Artist
                     </p>
                   </div>
                 </div>
               </Link>
             ))}
           </div>
-        ) : (
+        )}
+
+        {/* Empty */}
+        {!loading && artists.length === 0 && (
           <div className="py-20 text-center">
             <div className="text-4xl text-amber-400">♪</div>
 
@@ -132,4 +139,3 @@ export default function ArtistsPage() {
     </main>
   );
 }
-
