@@ -48,22 +48,41 @@ export default async function ArtistPage({ params }) {
     notFound();
   }
 
-  const response = await fetch(
-    `http://localhost:3000/api/artist?artist=${encodeURIComponent(
-      artist.name
-    )}`,
-    {
-      cache: "no-store",
+  const apiKey = process.env.YOUTUBE_API_KEY;
+
+  let songs = [];
+
+  if (apiKey) {
+    const youtubeUrl =
+      `https://www.googleapis.com/youtube/v3/search` +
+      `?part=snippet` +
+      `&q=${encodeURIComponent(artist.name)}` +
+      `&type=video` +
+      `&maxResults=12` +
+      `&key=${apiKey}`;
+
+    try {
+      const response = await fetch(youtubeUrl, {
+        cache: "no-store",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        songs = (data.items || []).map((item) => ({
+          id: item.id.videoId,
+          title: item.snippet.title,
+          artist: item.snippet.channelTitle,
+          image: item.snippet.thumbnails.high?.url,
+        }));
+      }
+    } catch (error) {
+      console.error("YouTube artist error:", error);
     }
-  );
-
-  const data = await response.json();
-
-  const songs = data.results || [];
+  }
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Artist Header */}
       <section className="overflow-hidden bg-gradient-to-br from-amber-50 via-white to-white">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <Link
@@ -99,7 +118,6 @@ export default async function ArtistPage({ params }) {
         </div>
       </section>
 
-      {/* Songs */}
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-8">
           <p className="text-sm uppercase tracking-[0.25em] text-amber-500">
