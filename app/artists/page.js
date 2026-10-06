@@ -1,5 +1,4 @@
-
-"use client";
+"use client"
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,13 +17,44 @@ export default function ArtistsPage() {
     try {
       setLoading(true);
 
+      // Get artists from YouTube
       const response = await fetch(
         `/api/artists?q=${encodeURIComponent(searchQuery)}`
       );
 
       const data = await response.json();
 
-      setArtists(data.results || []);
+      // Get real artist images
+      const artistsWithImages = await Promise.all(
+        (data.results || []).map(async (artist) => {
+          try {
+            const profileResponse = await fetch(
+              `/api/artist-profile?q=${encodeURIComponent(
+                artist.name
+              )}`
+            );
+
+            const profileData = await profileResponse.json();
+
+            return {
+              ...artist,
+              image: profileData.image || null,
+            };
+          } catch (error) {
+            console.error(
+              "Artist profile error:",
+              error
+            );
+
+            return {
+              ...artist,
+              image: null,
+            };
+          }
+        })
+      );
+
+      setArtists(artistsWithImages);
     } catch (error) {
       console.error("Artist search error:", error);
       setArtists([]);
@@ -45,6 +75,7 @@ export default function ArtistsPage() {
   return (
     <main className="min-h-screen bg-white px-6 py-16">
       <div className="mx-auto max-w-7xl">
+
         {/* Header */}
         <div className="mb-10">
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-500">
@@ -68,7 +99,9 @@ export default function ArtistsPage() {
           <input
             type="text"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) =>
+              setQuery(event.target.value)
+            }
             placeholder="Search artists..."
             className="flex-1 rounded-2xl border border-amber-500/20 bg-white px-5 py-4 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
           />
@@ -98,14 +131,23 @@ export default function ArtistsPage() {
                 className="group"
               >
                 <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:border-amber-200 group-hover:shadow-xl">
+
+                  {/* Image */}
                   <div className="aspect-square overflow-hidden bg-amber-50">
-                    <img
-                      src={artist.image}
-                      alt={artist.name}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                    {artist.image ? (
+                      <img
+                        src={artist.image}
+                        alt={artist.name}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-5xl text-amber-400">
+                        ♪
+                      </div>
+                    )}
                   </div>
 
+                  {/* Name */}
                   <div className="p-4 text-center">
                     <h2 className="truncate font-semibold text-gray-900 transition group-hover:text-amber-600">
                       {artist.name}
@@ -124,7 +166,9 @@ export default function ArtistsPage() {
         {/* Empty */}
         {!loading && artists.length === 0 && (
           <div className="py-20 text-center">
-            <div className="text-4xl text-amber-400">♪</div>
+            <div className="text-4xl text-amber-400">
+              ♪
+            </div>
 
             <h2 className="mt-4 text-xl font-semibold text-gray-900">
               No artists found
