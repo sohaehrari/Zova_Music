@@ -127,7 +127,9 @@ export default function ArtistsPage() {
             {artists.map((artist) => (
               <Link
                 key={artist.id}
-                href={`/artists/${artist.id}`}
+                href={`/artists/${artist.id}?name=${encodeURIComponent(
+                    artist.name
+                )}`}
                 className="group"
               >
                 <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:border-amber-200 group-hover:shadow-xl">

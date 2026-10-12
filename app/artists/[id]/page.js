@@ -1,181 +1,156 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+"use client";
 
-const artists = {
-  "aryana-sayeed": {
-    name: "Aryana Sayeed",
-    image: "/artists/aryana-sayeed.jpg",
-    bio: "Afghan singer and performer.",
-  },
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-  "farhad-darya": {
-    name: "Farhad Darya",
-    image: "/artists/farhad-darya.jpg",
-    bio: "Afghan singer, composer, and musician.",
-  },
+export default function ArtistPage() {
+  const searchParams = useSearchParams();
+  const artistName = searchParams.get("name");
 
-  hangama: {
-    name: "Hangama",
-    image: "/artists/hangama.jpg",
-    bio: "Afghan singer known for her distinctive voice and classic music.",
-  },
+  const [artist, setArtist] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  "jawid-sharif": {
-    name: "Jawid Sharif",
-    image: "/artists/jawid-sharif.jpg",
-    bio: "Afghan singer known for contemporary Afghan music.",
-  },
+  useEffect(() => {
+    async function getArtist() {
+      if (!artistName) {
+        setArtist(null);
+        setLoading(false);
+        return;
+      }
 
-  "qais-ul-ansari": {
-    name: "Qais Ulfat",
-    image: "/artists/qais-ulfat.jpg",
-    bio: "Afghan singer and musician.",
-  },
+      setLoading(true);
 
-  "nasrat-parsa": {
-    name: "Nasrat Parsa",
-    image: "/artists/nasrat-parsa.jpg",
-    bio: "Afghan singer known for his music and performances.",
-  },
-};
+      try {
+        const response = await fetch(
+          `/api/artist-profile?q=${encodeURIComponent(artistName)}`
+        );
 
-export default async function ArtistPage({ params }) {
-  const { id } = await params;
+        const data = await response.json();
+        setArtist(data);
+      } catch (error) {
+        console.error("Artist page error:", error);
+        setArtist(null);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  const artist = artists[id];
+    getArtist();
+  }, [artistName]);
 
-  if (!artist) {
-    notFound();
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#faf8f3] px-6 py-20 text-center text-gray-500">
+        Loading artist...
+      </main>
+    );
   }
 
-  const apiKey = process.env.YOUTUBE_API_KEY;
-
-  let songs = [];
-
-  if (apiKey) {
-    const youtubeUrl =
-      `https://www.googleapis.com/youtube/v3/search` +
-      `?part=snippet` +
-      `&q=${encodeURIComponent(artist.name)}` +
-      `&type=video` +
-      `&maxResults=12` +
-      `&key=${apiKey}`;
-
-    try {
-      const response = await fetch(youtubeUrl, {
-        cache: "no-store",
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        songs = (data.items || []).map((item) => ({
-          id: item.id.videoId,
-          title: item.snippet.title,
-          artist: item.snippet.channelTitle,
-          image: item.snippet.thumbnails.high?.url,
-        }));
-      }
-    } catch (error) {
-      console.error("YouTube artist error:", error);
-    }
+  if (!artistName || !artist?.artist) {
+    return (
+      <main className="min-h-screen bg-[#faf8f3] px-6 py-20 text-center">
+        <div className="text-5xl text-amber-500">♪</div>
+        <h1 className="mt-4 text-2xl font-bold text-gray-900">
+          Artist not found
+        </h1>
+        <p className="mt-2 text-gray-500">
+          We could not find this artist.
+        </p>
+      </main>
+    );
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <section className="overflow-hidden bg-gradient-to-br from-amber-50 via-white to-white">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <Link
-            href="/artists"
-            className="text-sm font-medium text-amber-600 transition hover:text-amber-700"
-          >
-            ← Back to Artists
-          </Link>
+    <main className="min-h-screen bg-[#faf8f3] px-5 py-12 sm:px-8">
+      <div className="mx-auto max-w-6xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.35em] text-amber-600">
+          Zova Music
+        </p>
 
-          <div className="mt-10 grid items-center gap-10 md:grid-cols-[320px_1fr]">
-            <div className="overflow-hidden rounded-[2rem] border border-amber-100 shadow-xl">
-              <img
-                src={artist.image}
-                alt={artist.name}
-                className="aspect-square w-full object-cover"
-              />
+        <section className="mt-8 overflow-hidden rounded-[2rem] border border-amber-100 bg-white shadow-sm">
+          <div className="grid items-center gap-8 p-7 sm:p-12 md:grid-cols-[260px_1fr]">
+            <div className="mx-auto h-56 w-56 overflow-hidden rounded-full border-4 border-amber-100 bg-amber-50 shadow-lg">
+              {artist.image ? (
+                <img
+                  src={artist.image}
+                  alt={artist.artist.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-7xl text-amber-500">
+                  ♪
+                </div>
+              )}
             </div>
 
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.3em] text-amber-500">
-                Zova Music
+            <div className="text-center md:text-left">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-600">
+                Artist Profile
               </p>
 
-              <h1 className="mt-3 text-4xl font-bold text-gray-900 sm:text-6xl">
-                {artist.name}
+              <h1 className="mt-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                {artist.artist.name}
               </h1>
 
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-600">
-                {artist.bio}
-              </p>
+              {artist.artist.country && (
+                <p className="mt-4 text-gray-500">
+                  Country: {artist.artist.country}
+                </p>
+              )}
+
+              {artist.artist.area && (
+                <p className="mt-1 text-gray-500">
+                  Area: {artist.artist.area}
+                </p>
+              )}
+
+              <div className="mt-7 flex flex-wrap justify-center gap-3 md:justify-start">
+                <button
+                  type="button"
+                  className="rounded-full bg-amber-500 px-7 py-3 font-semibold text-white transition hover:bg-amber-600"
+                  onClick={() =>
+                    document
+                      .getElementById("artist-music")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  Explore Music
+                </button>
+
+                <button
+                  type="button"
+                  className="rounded-full border border-amber-200 px-7 py-3 font-semibold text-gray-800 transition hover:bg-amber-50"
+                  onClick={() =>
+                    document
+                      .getElementById("artist-videos")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  Explore Videos
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-8">
-          <p className="text-sm uppercase tracking-[0.25em] text-amber-500">
+        <section id="artist-music" className="mt-14">
+          <h2 className="text-2xl font-bold text-gray-900">
             Music
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold text-gray-900">
-            Music by {artist.name}
           </h2>
-        </div>
+          <p className="mt-2 text-gray-500">
+            Songs by {artist.artist.name} will appear here.
+          </p>
+        </section>
 
-        {songs.length > 0 ? (
-          <div className="grid gap-4">
-            {songs.map((song) => (
-              <div
-                key={song.id}
-                className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-amber-200 hover:shadow-lg"
-              >
-                <img
-                  src={song.image}
-                  alt={song.title}
-                  className="h-16 w-16 shrink-0 rounded-xl object-cover"
-                />
-
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate font-semibold text-gray-900">
-                    {song.title}
-                  </h3>
-
-                  <p className="mt-1 truncate text-sm text-gray-400">
-                    {song.artist}
-                  </p>
-                </div>
-
-                <Link
-                  href={`/videos/${song.id}`}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 transition hover:bg-amber-500 hover:text-white"
-                  aria-label={`Watch ${song.title}`}
-                >
-                  ▶
-                </Link>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-3xl border border-dashed border-amber-200 bg-amber-50/40 p-10 text-center">
-            <div className="text-4xl text-amber-500">♪</div>
-
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
-              No music found
-            </h3>
-
-            <p className="mt-2 text-gray-500">
-              We could not find music for this artist.
-            </p>
-          </div>
-        )}
-      </section>
+        <section id="artist-videos" className="mt-10 pb-12">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Music Videos
+          </h2>
+          <p className="mt-2 text-gray-500">
+            Music videos by {artist.artist.name} will appear here.
+          </p>
+        </section>
+      </div>
     </main>
   );
 }
