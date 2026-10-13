@@ -71,21 +71,8 @@ export default function ArtistsPage() {
   return (
     <main className="min-h-screen bg-[#faf9f6] text-[#24231f]">
       <header className="border-b border-[#b99a53]/20 bg-white/90">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
-          <Link href="/" className="text-xl font-bold tracking-[0.2em]">
-            ZOVA <span className="text-[#b18b38]">MUSIC</span>
-          </Link>
-
-          <nav className="flex flex-wrap gap-5 text-sm text-[#77736a]">
-            <Link href="/search" className="transition hover:text-[#a47c28]">
-              Search
-            </Link>
-            <span className="font-semibold text-[#a47c28]">Artists</span>
-            <Link href="/videos" className="transition hover:text-[#a47c28]">
-              Videos
-            </Link>
-          </nav>
-        </div>
+      
+    
       </header>
 
       <section className="relative overflow-hidden border-b border-[#b99a53]/20 bg-gradient-to-br from-white via-[#f8f2e5] to-[#eee2c8]">
