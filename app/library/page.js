@@ -10,7 +10,7 @@ import {
   readZovaLibrary,
   removeFavorite,
   removeFromPlaylist,
-} from "@/lib/zova-library";
+} from "@/lib/zova-lib";
 
 export default function LibraryPage() {
   const [library, setLibrary] = useState({

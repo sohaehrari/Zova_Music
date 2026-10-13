@@ -4,7 +4,7 @@ export default function Navbar() {
   const pages = [
     { name: "Search", href: "/search" },
     { name: "Artists", href: "/artists" },
-    { name: "Songs", href: "/songs" },
+    { name: "Library", href: "/library" },
     { name: "Videos", href: "/videos" },
   ];
 
@@ -47,16 +47,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right side */}
-        <div className="hidden items-center gap-3 sm:flex">
-          <button className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-zinc-300 transition hover:border-amber-400/30 hover:bg-amber-400/10 hover:text-amber-300">
-            Sign In
-          </button>
-
-          <button className="rounded-full bg-gradient-to-r from-amber-300 to-yellow-500 px-5 py-2.5 text-sm font-semibold text-black shadow-lg shadow-amber-500/20 transition duration-300 hover:scale-105 hover:shadow-amber-400/30">
-            Get Started
-          </button>
-        </div>
+        
 
         {/* Mobile menu button */}
         <button
