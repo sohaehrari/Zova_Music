@@ -1,3 +1,5 @@
+import Link from "@/node_modules/next/link";
+
 export default function Hero() {
     return (
       <section className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-[#080808]">
@@ -36,17 +38,17 @@ export default function Hero() {
   
               {/* Buttons */}
               <div className="mt-9 flex flex-wrap gap-4">
-                <button className="group flex items-center gap-3 rounded-full bg-[#F5F1E8] px-7 py-3.5 font-medium text-black transition-all duration-300 hover:scale-105 hover:bg-white hover:shadow-[0_0_35px_rgba(212,175,55,0.18)]">
+                <Link   href="/search" className="group flex items-center gap-3 rounded-full bg-[#F5F1E8] px-7 py-3.5 font-medium text-black transition-all duration-300 hover:scale-105 hover:bg-white hover:shadow-[0_0_35px_rgba(212,175,55,0.18)]">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#151515] text-xs text-[#D4AF37] transition-transform duration-300 group-hover:translate-x-0.5">
                     ▶
                   </span>
   
                   Explore Music
-                </button>
+                </Link>
   
-                <button className="rounded-full border border-[#D4AF37]/30 bg-white/[0.03] px-7 py-3.5 font-medium text-white backdrop-blur-xl transition-all duration-300 hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/[0.08] hover:text-[#F5D77A]">
+                <Link   href="/videos" className="rounded-full border border-[#D4AF37]/30 bg-white/[0.03] px-7 py-3.5 font-medium text-white backdrop-blur-xl transition-all duration-300 hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/[0.08] hover:text-[#F5D77A]">
                   Watch Videos
-                </button>
+                </Link>
               </div>
   
               {/* Stats */}
