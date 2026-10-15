@@ -1,8 +1,13 @@
-"use client";
+"use client"
+
+
+
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import LibraryActions from "@/components/music/LibraryActions";
+import LibraryActions from "@/components/libraryActions";
+
 
 export default function VideosPage() {
   const [videos, setVideos] = useState([]);
@@ -68,20 +73,7 @@ export default function VideosPage() {
             ZOVA <span className="text-[#b18b38]">MUSIC</span>
           </Link>
 
-          <nav className="flex items-center gap-4 overflow-x-auto text-sm sm:gap-6">
-            <Link href="/search" className="whitespace-nowrap text-stone-600 hover:text-[#a47c28]">
-              Search
-            </Link>
-            <Link href="/artists" className="whitespace-nowrap text-stone-600 hover:text-[#a47c28]">
-              Artists
-            </Link>
-            <Link href="/videos" className="whitespace-nowrap font-semibold text-[#a47c28]">
-              Videos
-            </Link>
-            <Link href="/library" className="whitespace-nowrap text-stone-600 hover:text-[#a47c28]">
-              Library
-            </Link>
-          </nav>
+          
         </div>
       </header>
 

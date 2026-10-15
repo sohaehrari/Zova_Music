@@ -23,7 +23,7 @@ export default function Navbar() {
 
           <div className="hidden sm:block">
             <h1 className="text-lg font-semibold tracking-wide text-white">
-              Melody
+              ZOVA
             </h1>
             <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-500">
               Music Library

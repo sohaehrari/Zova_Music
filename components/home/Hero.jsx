@@ -16,7 +16,7 @@ export default function Hero() {
                 <span className="h-2 w-2 rounded-full bg-[#D4AF37] shadow-[0_0_12px_rgba(212,175,55,0.8)]" />
   
                 <span className="text-sm text-[#D6D0C4]">
-                  Afghan Music & Videos
+                 Music & Videos
                 </span>
               </div>
   
@@ -24,13 +24,13 @@ export default function Hero() {
               <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
                 The Sound
                 <span className="block bg-gradient-to-r from-[#F8F1DC] via-[#D4AF37] to-[#A67C00] bg-clip-text text-transparent">
-                  of Afghanistan.
+                  of world.
                 </span>
               </h1>
   
               {/* Description */}
               <p className="mt-7 max-w-xl text-base leading-7 text-[#918D84] sm:text-lg">
-                Discover Afghan artists, listen to your favorite songs,
+                Discover  artists, listen to your favorite songs,
                 and watch music videos — all in one beautiful place.
               </p>
   
@@ -123,7 +123,7 @@ export default function Hero() {
                     </p>
   
                     <p className="mt-1 text-sm font-medium text-white">
-                      Afghan Artist
+                     Artist
                     </p>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function Hero() {
                     </p>
   
                     <p className="mt-1 truncate text-sm font-medium text-white">
-                      Afghan Melody
+                   Melody
                     </p>
   
                     <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
